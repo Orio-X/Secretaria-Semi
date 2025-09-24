@@ -1,0 +1,9 @@
+// filepath: c:\Users\aluno\Documents\Raick\educrat_secretx.backfront\educrat_secretx\src\api\axios.js
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: 'http://localhost:8000/admin', // URL do seu backend
+  // Você pode adicionar headers aqui se necessário
+});
+
+export default api;
