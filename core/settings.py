@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -175,3 +176,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ADMIN_SITE_HEADER = "Minha Escola"
 ADMIN_SITE_TITLE = "Painel Administrativo"
 ADMIN_INDEX_TITLE = "Administração do Sistema"
+
+# Certifique-se que:
+# - O frontend está usando a API Django REST para salvar dados.
+# - A API salva os dados no banco de dados do Django.
+# - O Django Admin mostra tudo que está no banco de dados.

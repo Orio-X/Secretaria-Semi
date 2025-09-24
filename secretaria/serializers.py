@@ -11,37 +11,34 @@ from .models import (
 class ResponsavelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Responsavel
-        fields = '_all_'
+        fields = '__all__' # <-- Correção aqui
 
 class ProfessorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Professor
-        fields = '_all_'
+        fields = '__all__' # <-- Correção aqui
 
 class BimestreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bimestre
-        fields = '_all_'
+        fields = '__all__' # <-- Correção aqui
 
 class EventoExtracurricularSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventoExtracurricular
-        fields = '_all_'
+        fields = '__all__' # <-- Correção aqui
 
 class EventoCalendarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventoCalendario
-        fields = '_all_'
+        fields = '__all__' # <-- Correção aqui
 
 # === Serializers com Chaves Estrangeiras (Campos relacionados) ===
-# Listamos explicitamente os campos para evitar ambiguidade entre os campos
-# originais (ex: 'aluno') e os campos personalizados para escrita (ex: 'aluno_id').
+# Essa parte do código já está bem feita.
 
 class AlunoSerializer(serializers.ModelSerializer):
-    # Campo para leitura, que retorna a representação em string do Responsavel
     responsavel_nome = serializers.StringRelatedField(source='Responsavel', read_only=True)
     
-    # Campo para escrita, que recebe o ID do Responsavel
     responsavel = serializers.PrimaryKeyRelatedField(
         queryset=Responsavel.objects.all(),
         source='Responsavel',
@@ -50,9 +47,6 @@ class AlunoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Aluno
-        # Listando todos os campos explicitamente.
-        # Note que o campo 'Responsavel' é o campo original do modelo.
-        # E o 'responsavel_nome' é o campo de leitura.
         fields = [
             'id', 'name_aluno', 'phone_number_aluno', 'email_aluno', 'cpf_aluno', 
             'birthday_aluno', 'class_choice', 'month_choice', 'faltas_aluno', 
@@ -60,11 +54,9 @@ class AlunoSerializer(serializers.ModelSerializer):
         ]
 
 class NotaSerializer(serializers.ModelSerializer):
-    # Campos de leitura.
     aluno_nome = serializers.StringRelatedField(source='aluno', read_only=True)
     bimestre_numero = serializers.StringRelatedField(source='bimestre', read_only=True)
 
-    # Campos de escrita.
     aluno = serializers.PrimaryKeyRelatedField(queryset=Aluno.objects.all(), write_only=True)
     bimestre = serializers.PrimaryKeyRelatedField(queryset=Bimestre.objects.all(), write_only=True)
 
@@ -114,14 +106,12 @@ class SuspensaoSerializer(serializers.ModelSerializer):
 class LivroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Livro
-        fields = '_all_'
+        fields = '__all__' # <-- Correção aqui
 
 class EmprestimoLivroSerializer(serializers.ModelSerializer):
-    # Campos de leitura (GET)
     aluno_nome = serializers.StringRelatedField(source='aluno', read_only=True)
     livro_titulo = serializers.StringRelatedField(source='livro', read_only=True)
 
-    # Campos de escrita (POST/PUT)
     aluno = serializers.PrimaryKeyRelatedField(
         queryset=Aluno.objects.all(), 
         write_only=True
@@ -129,7 +119,7 @@ class EmprestimoLivroSerializer(serializers.ModelSerializer):
     livro = serializers.PrimaryKeyRelatedField(
         queryset=Livro.objects.all(), 
         write_only=True,
-        required=False,  # O livro não é obrigatório se for um computador
+        required=False,
         allow_null=True
     )
     

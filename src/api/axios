@@ -1,9 +1,42 @@
-// filepath: c:\Users\aluno\Documents\Raick\educrat_secretx.backfront\educrat_secretx\src\api\axios.js
-import axios from 'axios';
+// filepath: src/api/axios.js
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/admin', // URL do seu backend
-  // Você pode adicionar headers aqui se necessário
+  baseURL: "http://localhost:8000/api",
 });
+
+// Adicione um interceptor para incluir o token JWT nas requisições
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Adicione um interceptor para lidar com erros de resposta
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Aqui você pode adicionar lógica de tratamento de erro para diferentes códigos de status
+    if (error.response) {
+      const { status } = error.response;
+      if (status === 401) {
+        // Exemplo: deslogar o usuário ou redirecionar para a página de login
+        console.error("Erro 401: Não autorizado. Redirecionando para login...");
+        // Exemplo de redirecionamento (em um ambiente de SPA como React, Vue, etc.):
+        // window.location.href = '/login';
+      } else if (status === 403) {
+        console.error("Erro 403: Proibido. Acesso negado.");
+      } else if (status >= 500) {
+        console.error("Erro no servidor. Por favor, tente novamente mais tarde.");
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;

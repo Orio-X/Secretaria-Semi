@@ -1,6 +1,5 @@
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.permissions import AllowAny
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -29,101 +28,77 @@ def media_aluno_disciplina(request, aluno_id, disciplina):
 class ResponsavelViewSet(viewsets.ModelViewSet):
     queryset = Responsavel.objects.all()
     serializer_class = ResponsavelSerializer
-    permission_classes = [IsSecretaria]
+    permission_classes = [AllowAny]
 
 class ProfessorViewSet(viewsets.ModelViewSet):
     queryset = Professor.objects.all()
     serializer_class = ProfessorSerializer
-    permission_classes = [IsSecretaria]
+    permission_classes = [AllowAny]
 
 class AlunoViewSet(viewsets.ModelViewSet):
     queryset = Aluno.objects.all()
     serializer_class = AlunoSerializer
-    permission_classes = [IsSecretaria]
+    permission_classes = [AllowAny]
 
 # ViewSets com Permissões Múltiplas e Filtros de Objeto
 class NotaViewSet(viewsets.ModelViewSet):
     queryset = Nota.objects.all()
     serializer_class = NotaSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
-        user = self.request.user
-        if IsSecretaria().has_permission(self.request, self) or IsProfessor().has_permission(self.request, self):
-            return Nota.objects.all()
-        elif IsResponsavel().has_permission(self.request, self):
-            return Nota.objects.filter(aluno__Responsavel__user=user)
-        elif IsAluno().has_permission(self.request, self):
-            return Nota.objects.filter(aluno__user=user)
-        
-        return Nota.objects.none()
+        return Nota.objects.all()
 
     def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            self.permission_classes = [IsSecretaria | IsProfessor]
-        else:
-            self.permission_classes = [IsAuthenticated]
-        return super().get_permissions()
+        return [AllowAny()]
 
 class AtividadePendenteViewSet(viewsets.ModelViewSet):
     queryset = AtividadePendente.objects.all()
     serializer_class = AtividadePendenteSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
-        user = self.request.user
-        if IsSecretaria().has_permission(self.request, self) or IsProfessor().has_permission(self.request, self):
-            return AtividadePendente.objects.all()
-        elif IsResponsavel().has_permission(self.request, self):
-            return AtividadePendente.objects.filter(aluno__Responsavel__user=user)
-        elif IsAluno().has_permission(self.request, self):
-            return AtividadePendente.objects.filter(aluno__user=user)
-        
-        return AtividadePendente.objects.none()
+        return AtividadePendente.objects.all()
 
     def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            self.permission_classes = [IsSecretaria | IsProfessor]
-        else:
-            self.permission_classes = [IsAuthenticated]
-        return super().get_permissions()
-
-# ... (Restante das suas Views originais) ...
+        return [AllowAny()]
 
 class PagamentoPendenteViewSet(viewsets.ModelViewSet):
     queryset = PagamentoPendente.objects.all()
     serializer_class = PagamentoPendenteSerializer
-    # ... (lógica de permissões) ...
+    permission_classes = [AllowAny]
 
 class AdvertenciaViewSet(viewsets.ModelViewSet):
     queryset = Advertencia.objects.all()
     serializer_class = AdvertenciaSerializer
-    # ... (lógica de permissões) ...
+    permission_classes = [AllowAny]
 
 class SuspensaoViewSet(viewsets.ModelViewSet):
     queryset = Suspensao.objects.all()
     serializer_class = SuspensaoSerializer
-    # ... (lógica de permissões) ...
+    permission_classes = [AllowAny]
 
 class EventoExtracurricularViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = EventoExtracurricular.objects.all()
     serializer_class = EventoExtracurricularSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 class EventoCalendarioViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = EventoCalendario.objects.all()
     serializer_class = EventoCalendarioSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 class LivroViewSet(viewsets.ModelViewSet):
     queryset = Livro.objects.all()
     serializer_class = LivroSerializer
-    # ... (lógica de permissões) ...
+    permission_classes = [AllowAny]
 
 class EmprestimoLivroViewSet(viewsets.ModelViewSet):
     queryset = EmprestimoLivro.objects.all()
     serializer_class = EmprestimoLivroSerializer
-    # ... (lógica de permissões) ...
+    permission_classes = [AllowAny]
 
 class BimestreViewSet(viewsets.ModelViewSet):
     queryset = Bimestre.objects.all()
     serializer_class = BimestreSerializer
-    # ... (lógica de permissões) ...
+    permission_classes = [AllowAny]
