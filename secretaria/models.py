@@ -312,3 +312,25 @@ class EmprestimoLivro(models.Model):
     class Meta:
         verbose_name = "Empréstimo de Livro ou Computador"
         verbose_name_plural = "Empréstimos de Livros ou Computadores"
+
+# <--- NOVO MODELO DE TAREFA ADICIONADO ABAIXO --->
+class Tarefa(models.Model):
+    # Relação: Cada tarefa pertence a um aluno. Se o aluno for deletado, suas tarefas também serão.
+    # O related_name='tarefas' nos permite acessar as tarefas de um aluno facilmente (ex: aluno.tarefas.all())
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, related_name='tarefas')
+    
+    titulo = models.CharField(max_length=200, verbose_name="Título da Tarefa")
+    descricao = models.TextField(blank=True, null=True, verbose_name="Descrição")
+    data_entrega = models.DateField(blank=True, null=True, verbose_name="Data de Entrega")
+    concluida = models.BooleanField(default=False, verbose_name="Concluída")
+    data_criacao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        # Usando o campo name_aluno que você definiu no modelo Aluno
+        return f"{self.titulo} - Aluno: {self.aluno.name_aluno}"
+
+    class Meta:
+        verbose_name = "Tarefa"
+        verbose_name_plural = "Tarefas"
+        # Ordena as tarefas: as não concluídas primeiro, depois pela data de entrega.
+        ordering = ['concluida', 'data_entrega']

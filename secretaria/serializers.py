@@ -2,7 +2,8 @@ from rest_framework import serializers
 from .models import (
     Responsavel, Aluno, Professor, Bimestre, Nota, 
     AtividadePendente, EventoExtracurricular, PagamentoPendente, 
-    Advertencia, Suspensao, EventoCalendario, EmprestimoLivro, Livro
+    Advertencia, Suspensao, EventoCalendario, EmprestimoLivro, Livro,
+    Tarefa
 )
 
 # === Serializers Simples (Modelos sem chaves estrangeiras complexas) ===
@@ -11,27 +12,27 @@ from .models import (
 class ResponsavelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Responsavel
-        fields = '_all_'
+        fields = '__all__'
 
 class ProfessorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Professor
-        fields = '_all_'
+        fields = '__all__'
 
 class BimestreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bimestre
-        fields = '_all_'
+        fields = '__all__'
 
 class EventoExtracurricularSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventoExtracurricular
-        fields = '_all_'
+        fields = '__all__'
 
 class EventoCalendarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventoCalendario
-        fields = '_all_'
+        fields = '__all__'
 
 # === Serializers com Chaves Estrangeiras (Campos relacionados) ===
 # Listamos explicitamente os campos para evitar ambiguidade entre os campos
@@ -114,7 +115,7 @@ class SuspensaoSerializer(serializers.ModelSerializer):
 class LivroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Livro
-        fields = '_all_'
+        fields = '__all__'
 
 class EmprestimoLivroSerializer(serializers.ModelSerializer):
     # Campos de leitura (GET)
@@ -138,4 +139,19 @@ class EmprestimoLivroSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'aluno', 'aluno_nome', 'livro', 'livro_titulo', 'tipo', 
             'computador', 'data_emprestimo', 'data_devolucao', 'devolvido'
+        ]
+
+# <--- NOVO SERIALIZER DE TAREFA ADICIONADO ABAIXO --->
+class TarefaSerializer(serializers.ModelSerializer):
+    # Campo de leitura (para GET), mostra a representação em string do Aluno
+    aluno_nome = serializers.StringRelatedField(source='aluno', read_only=True)
+    
+    # Campo de escrita (para POST/PUT), espera o ID do Aluno
+    aluno = serializers.PrimaryKeyRelatedField(queryset=Aluno.objects.all(), write_only=True)
+
+    class Meta:
+        model = Tarefa
+        fields = [
+            'id', 'aluno', 'aluno_nome', 'titulo', 'descricao', 
+            'data_entrega', 'concluida', 'data_criacao'
         ]

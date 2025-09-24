@@ -5,8 +5,18 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .models import Responsavel, Aluno, Professor, Bimestre, Nota, AtividadePendente, EventoExtracurricular, PagamentoPendente, Advertencia, Suspensao, EventoCalendario, EmprestimoLivro, Livro
-from .serializers import ResponsavelSerializer, AlunoSerializer, ProfessorSerializer, BimestreSerializer, NotaSerializer, AtividadePendenteSerializer, EventoExtracurricularSerializer, PagamentoPendenteSerializer, AdvertenciaSerializer, SuspensaoSerializer, EventoCalendarioSerializer, EmprestimoLivroSerializer, LivroSerializer
+from .models import (
+    Responsavel, Aluno, Professor, Bimestre, Nota, AtividadePendente, 
+    EventoExtracurricular, PagamentoPendente, Advertencia, Suspensao, 
+    EventoCalendario, EmprestimoLivro, Livro, Tarefa
+)
+from .serializers import (
+    ResponsavelSerializer, AlunoSerializer, ProfessorSerializer, BimestreSerializer, 
+    NotaSerializer, AtividadePendenteSerializer, EventoExtracurricularSerializer, 
+    PagamentoPendenteSerializer, AdvertenciaSerializer, SuspensaoSerializer, 
+    EventoCalendarioSerializer, EmprestimoLivroSerializer, LivroSerializer, 
+    TarefaSerializer
+)
 from .permissions import IsSecretaria, IsProfessor, IsResponsavel, IsAluno
 from rest_framework.decorators import action
 
@@ -127,3 +137,43 @@ class BimestreViewSet(viewsets.ModelViewSet):
     queryset = Bimestre.objects.all()
     serializer_class = BimestreSerializer
     # ... (lógica de permissões) ...
+
+# <--- NOVO VIEWSET DE TAREFA ADICIONADO ABAIXO --->
+class TarefaViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint que permite que tarefas sejam visualizadas ou editadas.
+    Filtra as tarefas com base no perfil do usuário.
+    """
+    serializer_class = TarefaSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        
+        # Secretaria e Professores podem ver todas as tarefas
+        if IsSecretaria().has_permission(self.request, self) or IsProfessor().has_permission(self.request, self):
+            queryset = Tarefa.objects.all()
+        # Responsáveis veem as tarefas dos seus alunos
+        elif IsResponsavel().has_permission(self.request, self):
+            queryset = Tarefa.objects.filter(aluno__Responsavel__user=user)
+        # Alunos veem apenas suas próprias tarefas
+        elif IsAluno().has_permission(self.request, self):
+            queryset = Tarefa.objects.filter(aluno__user=user)
+        else:
+            return Tarefa.objects.none()
+
+        # Permite que professores/secretaria filtrem por um aluno específico via URL
+        # Exemplo: /api/tarefas/?aluno_id=5
+        aluno_id = self.request.query_params.get('aluno_id', None)
+        if aluno_id is not None and (IsSecretaria().has_permission(self.request, self) or IsProfessor().has_permission(self.request, self)):
+            queryset = queryset.filter(aluno__id=aluno_id)
+            
+        return queryset
+
+    def get_permissions(self):
+        # Apenas Secretaria e Professores podem criar, editar ou deletar tarefas
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            self.permission_classes = [IsSecretaria | IsProfessor]
+        # Todos os usuários autenticados podem listar/ver tarefas (já filtradas pelo get_queryset)
+        else:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()

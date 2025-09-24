@@ -14,6 +14,7 @@ from .views import (
     EventoCalendarioViewSet,
     LivroViewSet,
     EmprestimoLivroViewSet,
+    TarefaViewSet
 )
 
 router = DefaultRouter()
@@ -30,10 +31,10 @@ router.register(r'advertencias', AdvertenciaViewSet)
 router.register(r'suspensoes', SuspensaoViewSet)
 router.register(r'eventos-calendario', EventoCalendarioViewSet)
 router.register(r'livros', LivroViewSet)
+router.register(r'tarefas', TarefaViewSet, basename='tarefa') # <-- ROTA CORRIGIDA
 router.register(r'emprestimos', EmprestimoLivroViewSet)
 
-# O frontend vai acessar as URLs a partir de 'api/'
-# Ex: /api/alunos/, /api/professores/
+
 urlpatterns = [
     path('api/', include(router.urls)),
 ]

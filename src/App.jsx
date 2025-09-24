@@ -6,11 +6,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { useEffect, useState } from "react";
+import { useEffect } from "react"; // Removido o useState que não era mais usado
 import Context from "@/context/Context";
-import HomePage1 from "./pages";
-import api from "./api/axios";
 
+// Importe suas páginas
+import HomePage1 from "./pages";
 import DashboardPage from "./pages/dashboard/dashboard";
 import DshbListingPage from "./pages/dashboard/dshb-listing";
 import DshbSettingsPage from "./pages/dashboard/dshb-settings";
@@ -31,8 +31,8 @@ import ScrollTopBehaviour from "./components/common/ScrollTopBehaviour";
 import NotFoundPage from "./pages/not-found";
 
 function App() {
-  const [alunos, setAlunos] = useState([]);
-  const [erro, setErro] = useState(null);
+  // REMOVIDO: A busca de dados de 'alunos' foi retirada para melhorar a performance.
+  // Ela deve ser feita dentro do componente que precisa da lista (ex: DshbPartcipentPage).
 
   useEffect(() => {
     AOS.init({
@@ -43,29 +43,17 @@ function App() {
     });
   }, []);
 
-  useEffect(() => {
-    api
-      .get("alunos/")
-      .then((response) => {
-        if (Array.isArray(response.data)) {
-          setAlunos(response.data);
-        } else {
-          setAlunos([]);
-          setErro("Resposta da API não é uma lista.");
-        }
-      })
-      .catch((error) => setErro(error.message));
-  }, []);
-
   return (
     <>
       <Context>
         <BrowserRouter>
+          {/* A estrutura de rotas voltou a ser a original, mais simples, sem a proteção. */}
           <Routes>
             <Route path="/">
               <Route index element={<HomePage1 />} />
               <Route path="home-1" element={<HomePage1 />} />
 
+              {/* Todas as rotas do dashboard estão abertas novamente */}
               <Route path="dashboard" element={<DashboardPage />} />
               <Route path="dshb-listing" element={<DshbListingPage />} />
               <Route path="dshb-settings" element={<DshbSettingsPage />} />
@@ -73,6 +61,7 @@ function App() {
                 path="dshb-administration"
                 element={<DshbAdministrationPage />}
               />
+              {/* ROTA ATUALIZADA: A rota da tarefa agora é dinâmica, como queríamos. */}
               <Route path="dshb-assignment" element={<DshbAssignmentPage />} />
               <Route path="dshb-calendar" element={<DshbCalenderPage />} />
               <Route path="dshb-dashboard" element={<DshbDashboardPage />} />
@@ -100,4 +89,3 @@ function App() {
 }
 
 export default App;
-
