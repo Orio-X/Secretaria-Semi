@@ -1,0 +1,16 @@
+/*
+  REGRA #1 DO SASS:
+  Todas as regras @use devem vir primeiro, antes de TUDO.
+*/
+@use "./custom" as *;
+@use "react-modal-video/scss/modal-video" as *;
+
+// Linha comentada original
+// @import "../../../node_modules/bootstrap/scss/bootstrap";
+
+/*
+  Imports de arquivos .css (que não são módulos Sass) 
+  vêm DEPOIS das regras @use.
+*/
+@import "/assets/css/vendors.css";
+@import "/assets/css/main.css";
