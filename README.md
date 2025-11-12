@@ -1,9 +1,9 @@
-Projeto secretaria orion-x , integrado com funcionalidades do back e no front completas
+# Projeto secretaria orion-x , integrado com funcionalidades do back e no front completas
 
 
-**Configuração Obrigatória**
+## Configuração Obrigatória
 
-**-Cadastro de Bimestres**
+### -Cadastro de Bimestres
 
 Para que o módulo de Criação de Notas funcione corretamente, é essencial que os Bimestres sejam cadastrados previamente através do painel de administração do Django (/admin).
 
