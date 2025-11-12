@@ -1,4 +1,4 @@
-# Projeto secretaria Orio-x , integrado com funcionalidades do back e no front completas
+# Projeto secretaria SkyPen , integrado com funcionalidades do back e no front completas
 
 
 ## Configuração Obrigatória
