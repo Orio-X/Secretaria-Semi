@@ -1,4 +1,5 @@
-# Projeto secretaria SkyPen , integrado com funcionalidades do back e no front completas
+# 🚀 Projeto Secretaria SkyPen (Full Stack)
+Um sistema completo de gerenciamento de secretaria escolar, projetado para ser intuitivo e eficiente. O sistema integra um backend robusto em Django com um frontend moderno e reativo construído com React + Vite.
 
 
 ## Configuração Obrigatória
